@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#00199D">
+<meta name="author" content="Edwize Fire Control">
+<title>SCHOUW · Edwize Control Panel</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- STARTSCHERM -->
+<section id="thuis">
+  <header class="kop">
+    <img src="assets/logo.png" alt="Edwize Fire Control" class="logo">
+    <div class="kop-titel"><b>SCHOUW</b><span>Edwize Control Panel</span></div>
+  </header>
+  <div class="thuis-inhoud">
+    <div class="thuis-knoppen">
+      <button id="btnNieuwProject" class="knop primair">+ Nieuw project</button>
+      <button id="btnOpenProject" class="knop">Projectbestand openen</button>
+      <input type="file" id="invProject" accept=".zip,application/zip" hidden>
+    </div>
+    <h2>Projecten op dit apparaat</h2>
+    <ul id="projectLijst" class="projectlijst"></ul>
+    <p class="voetnoot" id="opslagInfo"></p>
+  </div>
+</section>
+
+<!-- PROJECTSCHERM -->
+<section id="werk" hidden>
+  <header class="balk">
+    <button id="btnTerug" class="ik" title="Terug naar projecten">&#8592;</button>
+    <div class="balk-titel"><b id="projTitel"></b><span id="projSub"></span></div>
+    <select id="selTekening" title="Tekening"></select>
+    <button id="btnTekening" class="knop klein">+ Tekening</button>
+    <input type="file" id="invTekening" accept="application/pdf,.pdf" multiple hidden>
+    <button id="btnPunten" class="knop klein">Punten <span id="puntTeller" class="teller">0</span></button>
+    <button id="btnMenu" class="knop klein">Project &#9662;</button>
+  </header>
+
+  <div class="werkvlak">
+    <nav id="gereedschap">
+      <button data-tool="hand" class="tool actief" title="Verschuiven en zoomen"><span>&#9995;</span>Hand</button>
+      <button data-tool="punt" class="tool" title="Punt plaatsen"><span class="ico-punt">1</span>Punt</button>
+      <button data-tool="wolk" class="tool" title="Wolk tekenen"><span>&#9729;</span>Wolk</button>
+      <button data-tool="pijl" class="tool" title="Pijl tekenen"><span>&#10142;</span>Pijl</button>
+      <button data-tool="tekst" class="tool" title="Tekst plaatsen"><span>T</span>Tekst</button>
+      <button data-tool="kies" class="tool" title="Aantekening kiezen om te wissen"><span>&#9746;</span>Wissen</button>
+      <div class="scheiding"></div>
+      <div id="kleuren"></div>
+      <div class="scheiding"></div>
+      <button id="btnOngedaan" class="tool" title="Ongedaan maken"><span>&#8630;</span>Terug</button>
+      <button id="btnPassend" class="tool" title="Hele tekening tonen"><span>&#9974;</span>Passend</button>
+    </nav>
+
+    <main id="stage">
+      <div id="wereld">
+        <canvas id="basis"></canvas>
+        <canvas id="scherp"></canvas>
+        <svg id="laag" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div id="leeg" class="leeg" hidden>
+        <p>Nog geen tekening in dit project.</p>
+        <button class="knop primair" id="btnTekening2">+ Tekening toevoegen (PDF)</button>
+      </div>
+      <div id="hint" class="hint" hidden></div>
+    </main>
+
+    <aside id="lijst" hidden>
+      <div class="lijst-kop">
+        <b>Punten</b>
+        <div class="filter">
+          <button data-filter="alle" class="actief">Alle</button>
+          <button data-filter="open">Open</button>
+          <button data-filter="opgelost">Opgelost</button>
+        </div>
+        <button id="btnLijstDicht" class="ik">&#10005;</button>
+      </div>
+      <ul id="puntLijst"></ul>
+    </aside>
+  </div>
+
+  <div id="menu" class="menu" hidden>
+    <button id="mnRapport">PDF-rapport maken</button>
+    <button id="mnOpslaan">Projectbestand opslaan</button>
+    <button id="mnGegevens">Projectgegevens</button>
+    <button id="mnTekeningWeg">Huidige tekening verwijderen</button>
+  </div>
+</section>
+
+<!-- DIALOOG PROJECTGEGEVENS -->
+<dialog id="dlgProject">
+  <form method="dialog" class="formulier">
+    <h3 id="dlgProjectTitel">Nieuw project</h3>
+    <div class="rij2">
+      <label>Projectnummer<input name="nummer" placeholder="26-135" required></label>
+      <label>Klant / projectnaam<input name="naam" placeholder="Intospace" required></label>
+    </div>
+    <label>Locatie<input name="locatie" placeholder="Oostweg 2 Zoetermeer"></label>
+    <div class="rij2">
+      <label>Datum bezoek<input name="datum" type="date"></label>
+      <label>Opgesteld door<input name="opsteller" value="E.W.M. (Edwin) Hondeveld"></label>
+    </div>
+    <label>Opdrachtgever<input name="opdrachtgever" placeholder="Optioneel"></label>
+    <details>
+      <summary>Rapport (bestandsnaam en status)</summary>
+      <div class="rij3">
+        <label>Code<input name="rapCode" value="SCH"></label>
+        <label>Volgnummer<input name="rapNr" value="01"></label>
+        <label>Versie<input name="rapVersie" value="v1.0"></label>
+      </div>
+      <label>Status<select name="rapStatus"><option>CONCEPT</option><option>DEFINITIEF</option></select></label>
+    </details>
+    <div class="knoppen">
+      <button value="annuleer" class="knop" formnovalidate>Annuleren</button>
+      <button value="ok" class="knop primair">Opslaan</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- DIALOOG PUNT -->
+<dialog id="dlgPunt" class="breed">
+  <div class="formulier">
+    <div class="punt-kop">
+      <span id="puntNr" class="nr-bol">1</span>
+      <h3>Punt</h3>
+      <div class="status-knoppen">
+        <button data-status="open" class="actief">Open</button>
+        <button data-status="opgelost">Opgelost</button>
+      </div>
+    </div>
+    <div class="cat-label">Categorie</div>
+    <div id="catKnoppen" class="cat-knoppen"></div>
+    <label>Korte titel<input id="puntTitel" placeholder="Bijv. sprinkler beschadigd bij dock 22"></label>
+    <label>Omschrijving<textarea id="puntTekst" rows="4" placeholder="Wat is er gezien, wat moet er gebeuren?"></textarea></label>
+    <div class="foto-balk">
+      <button id="btnCamera" class="knop primair">Foto maken</button>
+      <button id="btnGalerij" class="knop">Uit galerij</button>
+      <input type="file" id="invCamera" accept="image/*" capture="environment" hidden>
+      <input type="file" id="invGalerij" accept="image/*" multiple hidden>
+    </div>
+    <div id="fotoRij" class="foto-rij"></div>
+    <div class="knoppen">
+      <button id="btnPuntWeg" class="knop gevaar">Punt verwijderen</button>
+      <button id="btnPuntVerplaats" class="knop">Verplaatsen</button>
+      <span class="vul"></span>
+      <button id="btnPuntKlaar" class="knop primair">Gereed</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- DIALOOG TEKST -->
+<dialog id="dlgTekst">
+  <form method="dialog" class="formulier">
+    <h3>Tekst op tekening</h3>
+    <textarea name="tekst" rows="3" required></textarea>
+    <div class="knoppen">
+      <button value="annuleer" class="knop" formnovalidate>Annuleren</button>
+      <button value="ok" class="knop primair">Plaatsen</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- FOTO GROOT -->
+<dialog id="dlgFoto" class="foto-groot"><img id="fotoGroot" alt=""><button class="knop" id="btnFotoDicht">Sluiten</button></dialog>
+
+<!-- BEVESTIGEN -->
+<dialog id="dlgVraag">
+  <form method="dialog" class="formulier">
+    <p id="vraagTekst"></p>
+    <div class="knoppen">
+      <button value="nee" class="knop">Annuleren</button>
+      <button value="ja" class="knop primair" id="vraagJa">Ja</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="bezig" hidden><div class="spinner"></div><p id="bezigTekst">Bezig...</p></div>
+<div id="melding" hidden></div>
+
+<script src="lib/jspdf.umd.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
